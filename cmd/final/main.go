@@ -80,9 +80,9 @@ func main() {
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&genre,&songCount) // <--- EDIT THIS LINE
+			rows.Scan(&id,&value) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>" + string + "</td><td>"+strconv.Itoa(id)+"</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + value + "</td><td>"+strconv.Itoa(id)+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
