@@ -6,6 +6,7 @@ h1, h3, #results {
     text-align: center;
     margin: 0 0 0 0;
 }
+
 h1 {
     padding-top: 10px;
     padding-bottom: 15px;
@@ -14,13 +15,22 @@ h1 {
     border-bottom: 2px solid #21353b;
 
 }
+
 h3 {
     padding-bottom: 10px;
     font-family: 'Roboto', sans-serif;
 }
+
+#homeBackground{
+    background-image: url('img/dental.jpg');
+    background-size: 100% 100%;
+    height: 500px;
+}
+
 header {
     background-color: #67b1c4;
 }
+
 footer {
     background-color: #67b1c4;
     border-top: 1px solid #21353b;

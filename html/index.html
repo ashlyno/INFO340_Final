@@ -3,18 +3,38 @@
     <head>
         <meta charset="utf-8">
         <title>Dental Clinic Database</title>
+        
+        <!-- Style -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
         <link rel="stylesheet" href="static/main.css" />
         <link href='https://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+        <!-- Scripts -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
         <script src="static/main.js"></script>
+        <script src="static/app.js"></script>
+
     </head>
+
     <body>
-        <!-- I apologize to all the UI designers -->
         <header>
-            <h1>Dental Clinic Database</h1>
+            <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->
+                <div id="fixed">
+                    <h1>Dental Clinic Database</h1>
+
+                    <form name="trackForm">
+                        <!-- bind the search term to the controller -->
+                        <label> Name : </label>
+                        <input class="searchBar" id="name"></input>
+                        <button id="submit" ng-click="hide={'visibility':'hidden'}">Search</button>
+                    </form> 
+                </div>      
+            </div>
         </header>
+        <div id="homeBackground" ng-style="hide">
+        </div>
         <div class="content" id="results">
             <div class="row">
                 <div class="col-md-12" id="firstQuery">
