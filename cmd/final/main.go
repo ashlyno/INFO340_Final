@@ -58,7 +58,7 @@ func main() {
 	router.GET("/query1", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM Patient") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID WHERE Patient.firstname = 'Jenny' AND Patient.lastname = 'Goodtooth';") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -74,85 +74,89 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// declare all your RETURNED columns here
-		var patient_id int
-		var address_id int
+
 		var firstname string
 		var lastname string
-		var email string 
-		var dob string
+		var medication string 
+		var treatment string
+
 		
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&patient_id,&address_id,&firstname,&lastname,&email,&dob) // <--- EDIT THIS LINE
+			rows.Scan(&firstname,&lastname,&medication,&treatment) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>" + strconv.Itoa(patient_id) + "</td><td>"+strconv.Itoa(address_id)+"</td><td>"+firstname+"</td><td>"+lastname+"</td><td>"+email+"</td><td>"+dob+"</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>"+firstname+"</td><td>"+lastname+"</td><td>"+medication+"</td><td>"+treatment+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	// router.GET("/query2", func(c *gin.Context) {
-	// 	table := "<table class='table'><thead><tr>"
-	// 	// put your query here
-	// 	rows, err := db.Query("SELECT Song.title AS title, Artist.firstName AS firstName, Artist.lastName AS lastName FROM Song JOIN Album ON Song.albumId = Album.albumId JOIN Artist ON Album.artistId = Artist.artistId WHERE Album.genre = (SELECT favoriteGenre FROM Person WHERE Person.firstName = 'Katie')") // <--- EDIT THIS LINE
-	// 	if err != nil {
-	// 		// careful about returning errors to the user!
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 	}
-	// 	// foreach loop over rows.Columns, using value
-	// 	cols, _ := rows.Columns()
-	// 	if len(cols) == 0 {
-	// 		c.AbortWithStatus(http.StatusNoContent)
-	// 	}
-	// 	for _, value := range cols {
-	// 		table += "<th class='text-center'>" + value + "</th>"
-	// 	}
-	// 	// once you've added all the columns in, close the header
-	// 	table += "</thead><tbody>"
-	// 	// columns
-	// 	var title string
-	// 	var firstName string
-	// 	var lastName string
-	// 	for rows.Next() {
-	// 		rows.Scan(&title,&firstName,&lastName) // put columns here prefaced with &
-	// 		table += "<tr><td>"+title+"</td><td>"+firstName+"</td><td>"+lastName+"</td></tr>" // <--- EDIT THIS LINE
-	// 	}
-	// 	// finally, close out the body and table
-	// 	table += "</tbody></table>"
-	// 	c.Data(http.StatusOK, "text/html", []byte(table))
-	// })
+	router.GET("/query2", func(c *gin.Context) {
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT Dentist.FirstName AS DfirstName, Dentist.LastName AS DlastName,Patient.FirstName AS PfirstName, Patient.LastName AS PlastName, Visit.VisitDate As date FROM Visit JOIN Dentist ON Dentist.Dentist_ID = Visit.Dentist_ID JOIN Patient ON Patient.Patient_ID = Visit.Patient_ID WHERE VisitDate = date('2016-06-01');") // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		var DfirstName string
+		var DlastName string
+		var PfirstName string
+		var PlastName string
+		var date string
 
-	// router.GET("/query3", func(c *gin.Context) {
-	// 	table := "<table class='table'><thead><tr>"
-	// 	// put your query here
-	// 	rows, err := db.Query("SELECT Song.title AS title, Song.length AS seconds FROM Song JOIN Album ON Song.albumId = Album.albumId WHERE Album.releaseDate > date('2010-01-01') ORDER BY seconds ASC") // <--- EDIT THIS LINE
-	// 	if err != nil {
-	// 		// careful about returning errors to the user!
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 	}
-	// 	// foreach loop over rows.Columns, using value
-	// 	cols, _ := rows.Columns()
-	// 	if len(cols) == 0 {
-	// 		c.AbortWithStatus(http.StatusNoContent)
-	// 	}
-	// 	for _, value := range cols {
-	// 		table += "<th class='text-center'>" + value + "</th>"
-	// 	}
-	// 	// once you've added all the columns in, close the header
-	// 	table += "</thead><tbody>"
-	// 	// columns
-	// 	var title string
-	// 	var seconds int
-	// 	for rows.Next() {
-	// 		rows.Scan(&title,&seconds) // put columns here prefaced with &
-	// 		table += "<tr><td>"+title+"</td><td>"+strconv.Itoa(seconds)+"</td><</tr>" // <--- EDIT THIS LINE
-	// 	}
-	// 	// finally, close out the body and table
-	// 	table += "</tbody></table>"
-	// 	c.Data(http.StatusOK, "text/html", []byte(table))
-	// })
+		for rows.Next() {
+			rows.Scan(&DfirstName,&DlastName,&PfirstName,&PlastName,&date) // put columns here prefaced with &
+			table += "<tr><td>"+DfirstName+"</td><td>"+DlastName+"</td><<td>"+PfirstName+"</td><td>"+PlastName+"</td><td>"+date+"</td></tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
+
+	router.GET("/query3", func(c *gin.Context) {
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		var firstName string
+		var lastName string
+		var amount int
+		for rows.Next() {
+			rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
+			table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
 
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)
