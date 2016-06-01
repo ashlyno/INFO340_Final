@@ -23,7 +23,13 @@
             <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->
                 <div id="fixed">
                     <h1>Dental Clinic Database</h1>
-
+                        <nav><ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="patients.html">Patients</a></li>
+                            <li><a href="dentists.html">Dentists</a></li>
+                            <li><a href="registration.html">Register</a></li>
+                            <li><a href="about.html">About</a></li>
+                        </ul></nav>
                     <form name="trackForm">
                         <!-- bind the search term to the controller -->
                         <label> Name : </label>
@@ -32,6 +38,7 @@
                     </form> 
                 </div>      
             </div>
+
         </header>
         <div id="homeBackground" ng-style="hide">
         </div>
