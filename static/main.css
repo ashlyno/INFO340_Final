@@ -16,6 +16,19 @@ h1, h3, #results {
     width: 10px;
 }
 
+.formBox {
+    margin-left: 2em;
+    padding: 1em;
+    width: 40%;
+    height: 30%;
+
+}
+
+#appointList {
+    margin-left: 30px;
+    margin-top: 150px;
+}
+
 nav {
     background-color: #67b1c4;
     font-size: 16px;

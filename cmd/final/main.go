@@ -197,6 +197,44 @@ func main() {
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
+
+	router.POST("/appointQuery", func(c *gin.Context) {
+		var name NameCommand
+
+		c.BindJSON(&name)
+		log.Println(name.FirstName+" "+name.LastName)
+
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT DISTINCT Dentist.Phone AS phone, Dentist.Email AS email, Dentist.HireDate AS date FROM Dentist WHERE Dentist.firstname = $1 AND Dentist.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		var phone string
+		var email string
+		var date string
+
+		for rows.Next() {
+			rows.Scan(&phone,&email,&date) // put columns here prefaced with &
+			table += "<tr><td>"+phone+"</td><td>"+email+"</td><td>"+date+"</td></tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
+
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)
 }

@@ -38,19 +38,17 @@
         </header>
 
         <main>
-            <div id ="appoint">
-                <form>
-                  Patient ID:<br>
-                  <input type="number" name="patientID"><br>
+            <div id ="appoint" class="container formBox">
+                <form class="container">
                   First name:<br>
-                  <input type="text" name="firstName"><br>
+                  <input ng-model="firstName" type="text" name="firstName"><br>
                   Last name:<br>
-                  <input type="text" name="lastName"><br>
+                  <input ng-model="lastName" type="text" name="lastName"><br>
                   Email:<br>
-                  <input type="email" name="email"><br>
+                  <input ng-model="email" type="email" name="email"><br>
                   Date of Birth:<br>
-                  <input type="date" name="birthdate"><br>
-                  <input id="submit" type="submit" value="Submit">
+                  <input ng-model="dob" type="date" name="birthdate"><br>
+                  <input id="submit" type="submit" value="Submit" ng-click="registerIt">
                 </form>
             </div>
         </main>
