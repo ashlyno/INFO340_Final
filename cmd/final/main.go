@@ -81,7 +81,7 @@ func main() {
 		table := "<table class='table'><thead><tr>"
 
 		// put your query here
-		rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment, Dentist.FirstName AS dFirstname, Dentist.LastName AS dLastname FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID JOIN Visit ON Visit.patient_ID = Patient.patient_ID JOIN Dentist ON Dentist.dentist_ID = Visit.dentist_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT Visit.VisitDate AS date, Medication.name AS medication, Treatment.type AS treatment, Dentist.FirstName AS dFirstname, Dentist.LastName AS dLastname FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID JOIN Visit ON Visit.patient_ID = Patient.patient_ID JOIN Dentist ON Dentist.dentist_ID = Visit.dentist_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -104,8 +104,6 @@ func main() {
 		var dateOnly = strings.SplitAfter(date,"T")[0]
 		var dFirstname string
 		var dLastname string
-		var firstname string
-		var lastname string
 		var medication string 
 		var treatment string
 		log.Println(date)
@@ -113,9 +111,9 @@ func main() {
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&dateOnly,&firstname,&lastname,&medication,&treatment,&dFirstname,&dLastname) // <--- EDIT THIS LINE
+			rows.Scan(&dateOnly,&medication,&treatment,&dFirstname,&dLastname) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>"+dateOnly+"</td><<td>"+firstname+"</td><td>"+lastname+"</td><td>"+medication+"</td><td>"+treatment+"</td><td>"+dFirstname+"</td><td>"+dLastname+"</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>"+dateOnly+"</td><td>"+medication+"</td><td>"+treatment+"</td><td>"+dFirstname+"</td><td>"+dLastname+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -123,9 +121,15 @@ func main() {
 	})
 
 	router.POST("/addressQuery", func(c *gin.Context) {
+
+		var name NameCommand
+
+		c.BindJSON(&name)
+		log.Println(name.FirstName+" "+name.LastName)
+
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT Dentist.FirstName AS DfirstName, Dentist.LastName AS DlastName,Patient.FirstName AS PfirstName, Patient.LastName AS PlastName, Visit.VisitDate As date FROM Visit JOIN Dentist ON Dentist.Dentist_ID = Visit.Dentist_ID JOIN Patient ON Patient.Patient_ID = Visit.Patient_ID WHERE VisitDate = date('2016-06-01');") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT DISTINCT Address.Street_1 AS street1, Address.Street_2 AS street2, Address.City AS city, Address.State AS state, Address.PostalCode AS postal FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID JOIN Visit ON Visit.patient_ID = Patient.patient_ID JOIN Dentist ON Dentist.dentist_ID = Visit.dentist_ID JOIN Address ON Patient.address_ID = Address.address_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -141,27 +145,30 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
-		var DfirstName string
-		var DlastName string
-		var PfirstName string
-		var PlastName string
-		var date string
+		var street1 string
+		var street2 string
+		var city string
+		var state string
+		var postal string
 
 		for rows.Next() {
-			rows.Scan(&DfirstName,&DlastName,&PfirstName,&PlastName,&date) // put columns here prefaced with &
-			table += "<tr><td>"+DfirstName+"</td><td>"+DlastName+"</td><<td>"+PfirstName+"</td><td>"+PlastName+"</td><td>"+date+"</td></tr>" // <--- EDIT THIS LINE
+			rows.Scan(&street1,&street2,&city,&state,&postal) // put columns here prefaced with &
+			table += "<tr><td>"+street1+"</td><td>"+street2+"</td><td>"+city+"</td><td>"+state+"</td><td>"+postal+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	router.GET("/query3", func(c *gin.Context) {
+	router.POST("/dentistQuery", func(c *gin.Context) {
+		var name NameCommand
+
+		c.BindJSON(&name)
+		log.Println(name.FirstName+" "+name.LastName)
+
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM appointment;") // <--- EDIT THIS LINE
-
-		// rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT DISTINCT Dentist.Phone AS phone, Dentist.Email AS email, Dentist.HireDate AS date FROM Dentist WHERE Dentist.firstname = $1 AND Dentist.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -177,12 +184,13 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
-		var firstName string
-		var lastName string
-		var amount int
+		var phone string
+		var email string
+		var date string
+
 		for rows.Next() {
-			rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
-			table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
+			rows.Scan(&phone,&email,&date) // put columns here prefaced with &
+			table += "<tr><td>"+phone+"</td><td>"+email+"</td><td>"+date+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"

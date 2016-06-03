@@ -33,45 +33,66 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 
 
     $scope.searchIt = function() {
+    	angular.element($scope.firstQuery).empty();
+
     	$scope.hideIt();
 		$scope.firstQuery = firstQuery;
 		$scope.printName();
 		// console.log($scope.firstName);
 		// console.log($scope.lastName);
+		if($scope.type == "patient"){
+			$http({
+				 method: 'POST',
+		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
+		 		 url: '/patientQuery'
+				}).then(function successCallback(response) {
+			    	var queryDiv = angular.element($scope.firstQuery);
+			    	// queryDiv.append(data[]);
+			    	queryDiv.append("<h2>"+$scope.firstName+" "+$scope.lastName+"</h2>")
+			    	queryDiv.append(response["data"]);
+			    	// console.log(data)
+			    	// console.log(response["data"])
+			    	// $scope.firstQuery.(response);
+			    }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			});
 
-		$http({
-			 method: 'POST',
-	 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
-	 		 url: '/patientQuery'
-			}).then(function successCallback(response) {
-		    	var queryDiv = angular.element($scope.firstQuery);
-		    	// queryDiv.append(data[]);
-		    	queryDiv.empty();
-		    	queryDiv.append(response["data"]);
-		    	// 		    console.log(data)
-		    	// console.log(response["data"])
-		    	// $scope.firstQuery.(response);
-		    }, function errorCallback(response) {
-		    // called asynchronously if an error occurs
-		    // or server returns response with an error status.
-		});
 
+			$http({
+				 method: 'POST',
+		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
+		 		 url: '/addressQuery'
+				}).then(function successCallback(response) {
+			    	var queryDiv = angular.element($scope.firstQuery);
+			    	// queryDiv.append(data[]);
+			    	queryDiv.append(response["data"]);
+			    	// 		    console.log(data)
+			    	// console.log(response["data"])
+			    	// $scope.firstQuery.(response);
+			    }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			});	
+		} else {
+			$http({
+				 method: 'POST',
+		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
+		 		 url: '/dentistQuery'
+				}).then(function successCallback(response) {
+			    	var queryDiv = angular.element($scope.firstQuery);
+			    	// queryDiv.append(data[]);
+			    	queryDiv.append("<h2>"+$scope.firstName+" "+$scope.lastName+"</h2>")
+			    	queryDiv.append(response["data"]);
+			    	// console.log(data)
+			    	// console.log(response["data"])
+			    	// $scope.firstQuery.(response);
+			    }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			});
 
-		$http({
-			 method: 'POST',
-	 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
-	 		 url: '/addressQuery'
-			}).then(function successCallback(response) {
-		    	var queryDiv = angular.element($scope.firstQuery);
-		    	// queryDiv.append(data[]);
-		    	queryDiv.append(response["data"]);
-		    	// 		    console.log(data)
-		    	// console.log(response["data"])
-		    	// $scope.firstQuery.(response);
-		    }, function errorCallback(response) {
-		    // called asynchronously if an error occurs
-		    // or server returns response with an error status.
-		});	
+		}
     }
 
 }])

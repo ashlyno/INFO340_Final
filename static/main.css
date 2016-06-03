@@ -7,6 +7,15 @@ h1, h3, #results {
     text-align: center;
     margin: 0 0 0 0;
 }
+
+#radio {
+    display: inline;
+    font-family: Helvetica;
+    font-size: 15px;
+    font-variant: normal;
+    width: 10px;
+}
+
 nav {
     background-color: #67b1c4;
     font-size: 16px;
@@ -15,6 +24,7 @@ nav {
     width: 80%;
     height: 50px;
     right: 0px;
+    margin-right: 1em;
     z-index: 1;
     top:0px;
 }
@@ -71,15 +81,16 @@ nav a:hover {
 }
 
 form {
+    margin-top: 0px;
     display: inline;
     margin-left: 1em;
-    width: 20%;
+    width: 40%;
 }
 
-form input {
+#search{
     font-family: Helvetica;
     font-variant: normal;
-    width: 50%;
+    width: 40%;
     margin-top: 10px;
     margin-left: 2em;
 }
