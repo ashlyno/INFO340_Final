@@ -149,6 +149,8 @@ footer {
 
 #appoint {
     padding-top: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 input:valid{
@@ -156,6 +158,11 @@ input:valid{
 }
 input:invalid{
     border: 1px solid red;
+}
+
+#submit{
+    border-radius: 5px;
+    color: white;
 }
 
 
