@@ -1,32 +1,6 @@
 'use strict';
 
 angular.module('myApp', ['ngSanitize','ui.router'])
-	.config(function($stateProvider,$urlRouterProvider){
-
-		$stateProvider
-			.state('patients', {
-				url: '/patients', //"root" directory
-				templateUrl: '/patients',
-				controller: 'MyCtrl'
-			})
-
-			.state('appointment', {
-				url: '/appointment', //"root" directory
-				templateUrl: '/appointment',
-				controller: 'MyCtrl'
-			})
-
-			.state('registration', {
-				url: '/register',
-				templateUrl: '/register',
-				controller: 'MyCtrl'
-			})
-
-		// For any unmatched url, redirect to "home"
-		$urlRouterProvider.otherwise('/');
-
-	})
-		
   .controller('MyCtrl', ['$scope', '$http','$state', function($scope, $http, $state) { 
   	
   	$scope.hideImg = false;
@@ -81,44 +55,25 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
 		});
+
+
+		$http({
+			 method: 'POST',
+	 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
+	 		 url: '/addressQuery'
+			}).then(function successCallback(response) {
+		    	var queryDiv = angular.element($scope.firstQuery);
+		    	// queryDiv.append(data[]);
+		    	queryDiv.append(response["data"]);
+		    	// 		    console.log(data)
+		    	// console.log(response["data"])
+		    	// $scope.firstQuery.(response);
+		    }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});	
     }
 
-    // $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-
-	  // var param = function(obj) {
-	  //   var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
-
-	  //   for(name in obj) {
-	  //     value = obj[name];
-
-	  //     if(value instanceof Array) {
-	  //       for(i=0; i<value.length; ++i) {
-	  //         subValue = value[i];
-	  //         fullSubName = name + '[' + i + ']';
-	  //         innerObj = {};
-	  //         innerObj[fullSubName] = subValue;
-	  //         query += param(innerObj) + '&';
-	  //       }
-	  //     }
-	  //     else if(value instanceof Object) {
-	  //       for(subName in value) {
-	  //         subValue = value[subName];
-	  //         fullSubName = name + '[' + subName + ']';
-	  //         innerObj = {};
-	  //         innerObj[fullSubName] = subValue;
-	  //         query += param(innerObj) + '&';
-	  //       }
-	  //     }
-	  //     else if(value !== undefined && value !== null)
-	  //       query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
-	  //   }
-	  //   return query.length ? query.substr(0, query.length - 1) : query;
-	  // };
-
-	  // // Override $http service's default transformRequest
-	  // $httpProvider.defaults.transformRequest = [function(data) {
-	  //   return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
-	  // }];
 }])
 
 
