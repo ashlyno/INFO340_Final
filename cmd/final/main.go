@@ -156,36 +156,38 @@ func main() {
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	// router.GET("/query3", func(c *gin.Context) {
-	// 	table := "<table class='table'><thead><tr>"
-	// 	// put your query here
-	// 	rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
-	// 	if err != nil {
-	// 		// careful about returning errors to the user!
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 	}
-	// 	// foreach loop over rows.Columns, using value
-	// 	cols, _ := rows.Columns()
-	// 	if len(cols) == 0 {
-	// 		c.AbortWithStatus(http.StatusNoContent)
-	// 	}
-	// 	for _, value := range cols {
-	// 		table += "<th class='text-center'>" + value + "</th>"
-	// 	}
-	// 	// once you've added all the columns in, close the header
-	// 	table += "</thead><tbody>"
-	// 	// columns
-	// 	var firstName string
-	// 	var lastName string
-	// 	var amount int
-	// 	for rows.Next() {
-	// 		rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
-	// 		table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
-	// 	}
-	// 	// finally, close out the body and table
-	// 	table += "</tbody></table>"
-	// 	c.Data(http.StatusOK, "text/html", []byte(table))
-	// })
+	router.GET("/query3", func(c *gin.Context) {
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT * FROM appointment;") // <--- EDIT THIS LINE
+
+		// rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		var firstName string
+		var lastName string
+		var amount int
+		for rows.Next() {
+			rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
+			table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
 
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)

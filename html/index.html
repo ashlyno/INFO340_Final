@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
         <link href='https://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="static/main.css" />
+        <link rel="stylesheet" href="/static/main.css" />
 
 
         <!-- Scripts -->
@@ -16,7 +16,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js"></script>
-        <script src="static/app.js"></script>
+        <script src="/static/app.js"></script>
 
         <!-- Favicon -->
         <link rel="icon" href="static/img/tooth.png"/>  
@@ -26,7 +26,7 @@
     <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->   
         <header>
             <div id="fixed">
-                <a href="/"><p id="title">SAO Dental Office</p></a>
+                <a href="/html/"><p id="title">SAO Dental Office</p></a>
                 <nav>
                     <form name="searchForm">
                         <!-- bind the search term to the controller -->
@@ -34,7 +34,7 @@
                         <button id="submit" ng-click="searchIt()"><img src="../static/img/search.svg"/></button>
                     </form> 
                     <ul>
-                        <li><a href="/">Home</a></li>    
+                        <li><a href="/html/">Home</a></li>    
                         <li><a href="appointment.html">Appointment</a></li>
                         <li><a href="register.html">Registration</a></li>
                     </ul>
@@ -52,15 +52,6 @@
         
         <div class="content" id="results" ng-show="hideImg" ng-class="{'hide': $state.includes('patients')}">
             <div class="row">
-                <div class="col-md-12" ng-model="firstQuery" id="firstQuery">
-
-                </div>
-                <div class="col-md-12" id="secondQuery">
-
-                </div>
-                <div class="col-md-12" id="thirdQuery">
-
-                </div>
             </div>
         </div>
     </div> 
