@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	// "strconv"
 
 	// this allows us to run our web server
@@ -46,11 +47,11 @@ func main() {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	router.GET("/register", func(c *gin.Context) {
+	router.GET("/register.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "register.html", nil)
 	})
 
-	router.GET("/appointment", func(c *gin.Context) {
+	router.GET("/appointment.html", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "appointment.html", nil)
 	})
 
@@ -80,7 +81,7 @@ func main() {
 		table := "<table class='table'><thead><tr>"
 
 		// put your query here
-		rows, err := db.Query("SELECT Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment, Dentist.FirstName AS dFirstname, Dentist.LastName AS dLastname FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID JOIN Visit ON Visit.patient_ID = Patient.patient_ID JOIN Dentist ON Dentist.dentist_ID = Visit.dentist_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -99,25 +100,29 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// declare all your RETURNED columns here
-
+		var date string
+		var dateOnly = strings.SplitAfter(date,"T")[0]
+		var dFirstname string
+		var dLastname string
 		var firstname string
 		var lastname string
 		var medication string 
 		var treatment string
-		
+		log.Println(date)
+		log.Println(dateOnly)
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&firstname,&lastname,&medication,&treatment) // <--- EDIT THIS LINE
+			rows.Scan(&dateOnly,&firstname,&lastname,&medication,&treatment,&dFirstname,&dLastname) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>"+firstname+"</td><td>"+lastname+"</td><td>"+medication+"</td><td>"+treatment+"</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>"+dateOnly+"</td><<td>"+firstname+"</td><td>"+lastname+"</td><td>"+medication+"</td><td>"+treatment+"</td><td>"+dFirstname+"</td><td>"+dLastname+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	router.GET("/query2", func(c *gin.Context) {
+	router.POST("/addressQuery", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
 		rows, err := db.Query("SELECT Dentist.FirstName AS DfirstName, Dentist.LastName AS DlastName,Patient.FirstName AS PfirstName, Patient.LastName AS PlastName, Visit.VisitDate As date FROM Visit JOIN Dentist ON Dentist.Dentist_ID = Visit.Dentist_ID JOIN Patient ON Patient.Patient_ID = Visit.Patient_ID WHERE VisitDate = date('2016-06-01');") // <--- EDIT THIS LINE

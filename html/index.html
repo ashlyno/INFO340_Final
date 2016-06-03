@@ -26,7 +26,7 @@
     <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->   
         <header>
             <div id="fixed">
-                <p id="title">SAO Dental Office</p>
+                <a href="/"><p id="title">SAO Dental Office</p></a>
                 <nav>
                     <form name="searchForm">
                         <!-- bind the search term to the controller -->
@@ -34,15 +34,15 @@
                         <button id="submit" ng-click="searchIt()"><img src="../static/img/search.svg"/></button>
                     </form> 
                     <ul>
-                        <li><a ui-sref="patients">Patients</a></li>
-                        <li><a ui-sref="appointment">Appointment</a></li>
-                        <li><a ui-sref="registration">Registration</a></li>
+                        <li><a href="/">Home</a></li>    
+                        <li><a href="appointment.html">Appointment</a></li>
+                        <li><a href="register.html">Registration</a></li>
                     </ul>
                 </nav>
             </div>      
         </header>
 
-        <div id="homeBackground" ng-hide="hideImg" ng-class="{'hide': $state.includes('patients')}">
+        <div id="homeBackground" ng-hide="hideImg">
         </div>
         
         <!-- Display partials -->
