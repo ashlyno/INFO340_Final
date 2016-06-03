@@ -2,49 +2,71 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Dental Clinic Database</title>
+        <title>SAO Dentl Office</title>
+        
+        <!-- Style -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="static/main.css" />
         <link href='https://fonts.googleapis.com/css?family=Francois+One' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="static/main.css" />
+
+
+        <!-- Scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
-        <script src="static/main.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js"></script>
+        <script src="static/app.js"></script>
+
+        <!-- Favicon -->
+        <link rel="icon" href="static/img/tooth.png"/>  
     </head>
+
     <body>
-        <!-- I apologize to all the UI designers -->
+    <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->   
         <header>
-            <h1>Dental Clinic Database</h1>
-             <nav><ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="patients.html">Patients</a></li>
-              <li><a href="dentists.html">Dentists</a></li>
-              <li><a href="registration.html">Register</a></li>
-              <li><a href="about.html">About</a></li>
-            </ul></nav>
+            <div id="fixed">
+                <p id="title">SAO Dental Office</p>
+                <nav>
+                    <form name="searchForm">
+                        <!-- bind the search term to the controller -->
+                        <input class="searchBar" ng-model="name" placeholder="Search by name"></input>
+                        <button id="submit" ng-click="searchIt()"><img src="../static/img/search.svg"/></button>
+                    </form> 
+                    <ul>
+                        <li><a ui-sref="patients">Patients</a></li>
+                        <li><a ui-sref="appointment">Appointment</a></li>
+                        <li><a ui-sref="registration">Registration</a></li>
+                    </ul>
+                </nav>
+            </div>      
         </header>
-        <div class="content" id="results">
+
+        <div id="homeBackground" ng-hide="hideImg" ng-class="{'hide': $state.includes('patients')}">
+        </div>
+        
+        <!-- Display partials -->
+        <main>
+            <div ui-view></div>
+        </main>
+        <div class="content" id="results" ng-show="hideImg" ng-class="{'hide': $state.includes('patients')}">
             <div class="row">
-                <div class="col-md-12" id="firstQuery">
-                    <!-- replace the content in the p block with your question -->
-                    <p>
-                        Find medication and treatment information for Jenny Goodtooth
-                    </p>
+                <div class="col-md-12" ng-model="firstQuery" id="firstQuery">
+
                 </div>
                 <div class="col-md-12" id="secondQuery">
-                    <p>
-                        Search all names of dentists who saw patients on June.1.2016
-                    </p>
+
                 </div>
                 <div class="col-md-12" id="thirdQuery">
-                    <p>
-                        Look up name of patients with outstanding dues and the amount they owe
-                    </p>
+
                 </div>
             </div>
         </div>
-    </body>
+    </div> 
     <footer>
         <div class="col-md-9"><p>Created by: Kelsey, Ashlyn, Woosuk</p></div>
         <div class="col-md-3"><p>Copyright 2016. A HuskyData Production &copy;</p></div>
-</footer>
+    </footer>    
+
+    </body>
 </html>

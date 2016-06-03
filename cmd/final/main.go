@@ -9,10 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
+	// "strconv"
 
 	// this allows us to run our web server
 	"github.com/gin-gonic/gin"
+
 	// this lets us connect to Postgres DB's
 	_ "github.com/lib/pq"
 )
@@ -38,12 +39,21 @@ func main() {
 	}
 	router := gin.New()
 	router.Use(gin.Logger())
-	router.LoadHTMLGlob("html/*")
+	router.LoadHTMLGlob("html/*.html")
 	router.Static("/static", "static")
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
+
+	router.GET("/register", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "register.html", nil)
+	})
+
+	router.GET("/appointment", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "appointment.html", nil)
+	})
+
 
 	router.GET("/ping", func(c *gin.Context) {
 		ping := db.Ping()
@@ -55,19 +65,34 @@ func main() {
 		}
 	})
 
-	router.GET("/query1", func(c *gin.Context) {
+	router.POST("/patientQuery", func(c *gin.Context) {
+
+		var name NameCommand
+
+		c.BindJSON(&name)
+		log.Println(name.FirstName+" "+name.LastName)
+		// var FirstInput = c.PostForm("firstname");
+		// var LastInput = c.PostForm("lastname");
+		
+		// var firstInput = "Peter"
+		// var lastInput = "Seo"
+
 		table := "<table class='table'><thead><tr>"
+
 		// put your query here
-		rows, err := db.Query("SELECT Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID WHERE Patient.firstname = 'Jenny' AND Patient.lastname = 'Goodtooth';") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT Patient.FirstName AS firstname,Patient.LastName AS lastname, Medication.name AS medication, Treatment.type AS treatment FROM ChartNote JOIN Medication ON Medication.med_ID = ChartNote.med_ID JOIN Patient ON Patient.patient_ID = ChartNote.patient_ID JOIN Treatment ON Treatment.Treat_ID = ChartNote.Treat_ID WHERE Patient.firstname = $1 AND Patient.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 		// foreach loop over rows.Columns, using value
 		cols, _ := rows.Columns()
 		if len(cols) == 0 {
 			c.AbortWithStatus(http.StatusNoContent)
+			return
 		}
+
 		for _, value := range cols {
 			table += "<th class='text-center'>" + value + "</th>"
 		}
@@ -79,7 +104,6 @@ func main() {
 		var lastname string
 		var medication string 
 		var treatment string
-
 		
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
@@ -127,54 +151,42 @@ func main() {
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	router.GET("/query3", func(c *gin.Context) {
-		table := "<table class='table'><thead><tr>"
-		// put your query here
-		rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
-		if err != nil {
-			// careful about returning errors to the user!
-			c.AbortWithError(http.StatusInternalServerError, err)
-		}
-		// foreach loop over rows.Columns, using value
-		cols, _ := rows.Columns()
-		if len(cols) == 0 {
-			c.AbortWithStatus(http.StatusNoContent)
-		}
-		for _, value := range cols {
-			table += "<th class='text-center'>" + value + "</th>"
-		}
-		// once you've added all the columns in, close the header
-		table += "</thead><tbody>"
-		// columns
-		var firstName string
-		var lastName string
-		var amount int
-		for rows.Next() {
-			rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
-			table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
-		}
-		// finally, close out the body and table
-		table += "</tbody></table>"
-		c.Data(http.StatusOK, "text/html", []byte(table))
-	})
+	// router.GET("/query3", func(c *gin.Context) {
+	// 	table := "<table class='table'><thead><tr>"
+	// 	// put your query here
+	// 	rows, err := db.Query("SELECT Patient.firstname AS firstName, Patient.lastname AS lastName, AmountBilled AS amount FROM Payment JOIN Insurance ON Insurance.Insurance_ID = Payment.Insurance_ID JOIN Patient ON Insurance.Patient_ID = Patient.Patient_ID ;") // <--- EDIT THIS LINE
+	// 	if err != nil {
+	// 		// careful about returning errors to the user!
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 	}
+	// 	// foreach loop over rows.Columns, using value
+	// 	cols, _ := rows.Columns()
+	// 	if len(cols) == 0 {
+	// 		c.AbortWithStatus(http.StatusNoContent)
+	// 	}
+	// 	for _, value := range cols {
+	// 		table += "<th class='text-center'>" + value + "</th>"
+	// 	}
+	// 	// once you've added all the columns in, close the header
+	// 	table += "</thead><tbody>"
+	// 	// columns
+	// 	var firstName string
+	// 	var lastName string
+	// 	var amount int
+	// 	for rows.Next() {
+	// 		rows.Scan(&firstName,&lastName,&amount) // put columns here prefaced with &
+	// 		table += "<tr><td>"+firstName+"</td><td>"+lastName+"</td><td>"+strconv.Itoa(amount)+"</td><</tr>" // <--- EDIT THIS LINE
+	// 	}
+	// 	// finally, close out the body and table
+	// 	table += "</tbody></table>"
+	// 	c.Data(http.StatusOK, "text/html", []byte(table))
+	// })
 
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)
 }
 
-/*
-Example of processing a GET request
-
-// this will run whenever someone goes to last-first-lab7.herokuapp.com/EXAMPLE
-router.GET("/EXAMPLE", func(c *gin.Context) {
-    // process stuff
-    // run queries
-    // do math
-    //decide what to return
-    c.JSON(http.StatusOK, gin.H{
-        "key": "value"
-        }) // this returns a JSON file to the requestor
-    // look at https://godoc.org/github.com/gin-gonic/gin to find other return types. JSON will be the most useful for this
-})
-
-*/
+type NameCommand struct {
+	FirstName string `json:"firstname"`
+	LastName string `json:"lastname"`
+}
