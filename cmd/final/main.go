@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	// "strconv"
+	"strconv"
 
 	// this allows us to run our web server
 	"github.com/gin-gonic/gin"
@@ -197,20 +197,29 @@ func main() {
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
+	router.POST("/registerQuery", func(c *gin.Context) {
+		var info InfoCommand
 
-	router.POST("/appointQuery", func(c *gin.Context) {
-		var name NameCommand
-
-		c.BindJSON(&name)
-		log.Println(name.FirstName+" "+name.LastName)
+		c.BindJSON(&info)
+		
+		// result, err := db.Exec("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ($1,$2,$3,$4,$5);",nil,info.FirstName,info.LastName,info.Email,info.Date);
+		rows2, err := db.Query("INSERT INTO Patient (FirstName, LastName, Email, DOB) VALUES ($1,$2,$3,$4);",info.FirstName,info.LastName,info.Email,info.Date);
+		// log.Println(info.FirstName)
+		// log.Println(info.LastName)
+		// log.Println(info.Email)
+		// log.Println(info.Date)
+		_=rows2
+		// _=result
+		// _=err
 
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT DISTINCT Dentist.Phone AS phone, Dentist.Email AS email, Dentist.HireDate AS date FROM Dentist WHERE Dentist.firstname = $1 AND Dentist.lastname = $2;",name.FirstName,name.LastName) // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT patient_ID As id, firstName AS firstname, lastName AS lastname FROM Patient ORDER BY patient_ID ASC") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
 		}
+
 		// foreach loop over rows.Columns, using value
 		cols, _ := rows.Columns()
 		if len(cols) == 0 {
@@ -222,18 +231,57 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
-		var phone string
-		var email string
-		var date string
+		var id int
+		var firstname string
+		var lastname string
 
 		for rows.Next() {
-			rows.Scan(&phone,&email,&date) // put columns here prefaced with &
-			table += "<tr><td>"+phone+"</td><td>"+email+"</td><td>"+date+"</td></tr>" // <--- EDIT THIS LINE
+			rows.Scan(&id,&firstname,&lastname) // put columns here prefaced with &
+			table += "<tr><td>"+strconv.Itoa(id)+"</td><td>"+firstname+"</td><td>"+lastname+"</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
+
+	// router.POST("/appointQuery", func(c *gin.Context) {
+	// 	var info InfoCommand
+
+	// 	c.BindJSON(&info)
+	// 	log.Println(info.Date)
+	// 	// db.Query("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ('',$1,$2,$3,CAST($4 AS date));",info.FirstName,info.LastName,info.Email,info.Date);
+	// 	db.Query("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ('',$1,$2,$3,CAST($4 AS date));",info.FirstName,info.LastName,info.Email,info.Date);
+
+	// 	table := "<table class='table'><thead><tr>"
+	// 	// put your query here
+	// 	rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.firstName AS firstname, Patient.lastName AS lastname FROM Visit JOIN Patient ON Patient.patient_ID = Visit.patient_ID WHERE Visit.VisitDate >= date($1) ;",info.Today) // <--- EDIT THIS LINE
+	// 	if err != nil {
+	// 		// careful about returning errors to the user!
+	// 		c.AbortWithError(http.StatusInternalServerError, err)
+	// 	}
+	// 	// foreach loop over rows.Columns, using value
+	// 	cols, _ := rows.Columns()
+	// 	if len(cols) == 0 {
+	// 		c.AbortWithStatus(http.StatusNoContent)
+	// 	}
+	// 	for _, value := range cols {
+	// 		table += "<th class='text-center'>" + value + "</th>"
+	// 	}
+	// 	// once you've added all the columns in, close the header
+	// 	table += "</thead><tbody>"
+	// 	// columns
+	// 	var date string
+	// 	var firstname string
+	// 	var lastname string
+
+	// 	for rows.Next() {
+	// 		rows.Scan(&date,&firstname,&lastname) // put columns here prefaced with &
+	// 		table += "<tr><td>"+date+"</td><td>"+firstname+"</td><td>"+lastname+"</td></tr>" // <--- EDIT THIS LINE
+	// 	}
+	// 	// finally, close out the body and table
+	// 	table += "</tbody></table>"
+	// 	c.Data(http.StatusOK, "text/html", []byte(table))
+	// })
 
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)
@@ -242,4 +290,12 @@ func main() {
 type NameCommand struct {
 	FirstName string `json:"firstname"`
 	LastName string `json:"lastname"`
+}
+
+type InfoCommand struct {
+	FirstName string `json:"firstname"`
+	LastName string `json:"lastname"`
+	Email string `json:"email"`
+	Date string `json:"date"`
+	Today string `json:"today"`
 }

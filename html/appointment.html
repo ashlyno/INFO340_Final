@@ -10,7 +10,6 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="/static/main.css" />
 
-
         <!-- Scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
@@ -26,35 +25,38 @@
     <div ng-app="myApp" ng-controller="MyCtrl" > <!-- specify app -->   
         <header>
             <div id="fixed">
-                <a href="/html/"><p id="title">SAO Dental Office</p></a>
+                <a href="/"><p id="title">SAO Dental Office</p></a>
                 <nav>
                     <ul>
-                        <li><a href="/html/">Home</a></li> 
-                        <li><a href="appointment.html">Appointment</a></li>
+                        <li><a href="/">Home</a></li> 
                         <li><a href="register.html">Registration</a></li>
+                        <li><a href="appointment.html">Appointment</a></li>
                     </ul>
                 </nav>
             </div>      
         </header>
         <main>
-            <div class = "row">
-                <div id="appointList">
-                    <p>All Appointments Made</p>       
-                </div>
-                <div id ="appoint" class="container formBox">
-                    <form class="container">
-                      Patient ID:<br>
-                      <input type="number" name="patientID"><br>
-                      Dentist ID:<br>
-                      <input type="number" name="dentsistID"><br>
-                      Visit ID:<br>
-                      <input type="number" name="visitID"><br>
-                      Visit Date:<br>
+            <div class = "content">
+            <div>
+                <div class="col-md-6" id ="appoint">
+                    <p>Create New Appointment</p>
+                    <form>
+                      <label>Patient First Name:</label><br>
+                      <input type="text" name="pfirstName"><br>
+                      <label>Patient Last Name:</label><br>
+                      <input type="text" name="plastName"><br>
+                      <label>Visit Date:</label><br>
                       <input type="date" name="visitdate"><br>
-                      <input id="submit" type="submit" value="Submit">
+                      <br>
+                      <input id="submit" type="button" value="Submit" ng-click="appointIt">
                     </form>
                 </div>
-
+                <div class="col-md-6" id="appointList">
+                    <br>
+                    <br>
+                    <p>All Appointments Made</p>       
+                </div>
+            </div>
             </div>
         </main>
     </div> 

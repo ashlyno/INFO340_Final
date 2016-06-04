@@ -95,6 +95,11 @@ h3 {
     font-family: 'Roboto', sans-serif;
 }
 
+table {
+    text-align: center;
+    font-size: 15px;
+}
+
 #homeBackground{
     background-image: url('img/dental.jpg');
     background-size: 100% 100%;

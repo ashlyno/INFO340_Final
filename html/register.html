@@ -26,30 +26,40 @@
     <div ng-app="myApp" ng-controller="MyCtrl"> <!-- specify app -->   
         <header>
             <div id="fixed">
-                <a href="/html/"><p id="title">SAO Dental Office</p></a>
+                <a href="/"><p id="title">SAO Dental Office</p></a>
                 <nav>
                     <ul>
-                        <li><a href="/html/">Home</a></li> 
-                        <li><a href="appointment.html">Appointment</a></li>
+                        <li><a href="/">Home</a></li> 
                         <li><a href="register.html">Registration</a></li>
+                        <li><a href="appointment.html">Appointment</a></li>
                     </ul>
                 </nav>
             </div>      
         </header>
 
         <main>
-            <div id ="appoint" class="container formBox">
-                <form class="container">
-                  First name:<br>
-                  <input ng-model="firstName" type="text" name="firstName"><br>
-                  Last name:<br>
-                  <input ng-model="lastName" type="text" name="lastName"><br>
-                  Email:<br>
-                  <input ng-model="email" type="email" name="email"><br>
-                  Date of Birth:<br>
-                  <input ng-model="dob" type="date" name="birthdate"><br>
-                  <input id="submit" type="submit" value="Submit" ng-click="registerIt">
-                </form>
+            <div class="content">
+                <div id ="appoint" class ="col-md-6">
+                    <p>Add New Patient</p>
+                    <form>
+                      <label>First name:</label><br>
+                      <input ng-model="firstName" type="text" name="firstName"><br>
+                      <label>Last name:</label><br>
+                      <input ng-model="lastName" type="text" name="lastName"><br>
+                      <label>Email:</label><br>
+                      <input ng-model="email" type="email" name="email"><br>
+                      <label>Date of Birth:</label><br>
+                      <input ng-model="birth" type="date" name="birthdate"><br>
+                      <br>
+                      <button id="submit" ng-click="registerIt()"> Submit </button>
+                    </form>
+                </div>
+                <div class="col-md-6" id="registerListBox">
+                    <p>All Patients Registered</p>   
+                    <div class="row">
+              			  <div ng-model="registerList" id="registerList"></div>
+            		</div>    
+                </div>
             </div>
         </main>
         </div>

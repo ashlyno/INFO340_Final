@@ -37,9 +37,9 @@
                         </div>
                     </form> 
                     <ul>
-                        <li><a href="/html/">Home</a></li>    
-                        <li><a href="appointment.html">Appointment</a></li>
+                        <li><a href="/">Home</a></li>    
                         <li><a href="register.html">Registration</a></li>
+                        <li><a href="appointment.html">Appointment</a></li>
                     </ul>
                 </nav>
             </div>      
@@ -53,7 +53,7 @@
             <div ui-view></div>
         </main>
 
-        <div class="content" id="results" ng-show="hideImg" ng-class="{'hide': $state.includes('patients')}">
+        <div class="content" id="results" ng-show="hideImg">
             <div class="row">
                 <div class="col-md-12" ng-model="firstQuery" id="firstQuery"></div>
             </div>

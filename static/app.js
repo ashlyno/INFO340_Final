@@ -95,7 +95,118 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		}
     }
 
+
+    $scope.registerIt = function() {	
+
+    	$scope.registerList = registerList;
+
+    	var date = $scope.birth
+    	$scope.dob = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+
+		$http({
+			 method: 'POST',
+	 		 data: {'firstname': $scope.firstName, 
+	 		 		'lastname': $scope.lastName,
+	 		 		'email': $scope.email,
+	 		 		'date': $scope.dob}, 
+	 		 url: '/registerQuery'
+			}).then(function successCallback(response) {
+		    	var regiDiv = angular.element($scope.registerList);
+		    	// queryDiv.append(data[]);
+		    	regiDiv.append(response["data"]);
+		    	// console.log(response["data"]);
+		    }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+	}
+
+
+ //    $scope.appointIt = function() {	
+ //    	var date = new Date();
+ //    	$scope.today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+ //    	console.log(today)
+		
+	// 	$http({
+	// 		 method: 'POST',
+	//  		 data: {'firstname': $scope.firstName, 
+	//  		 		'lastname': $scope.lastName,
+	//  		 		'email': $scope.email,
+	//  		 		'today':$scope.today}, 
+	//  		 url: '/appointQuery'
+	// 		}).then(function successCallback(response) {
+	// 	    	var queryDiv = angular.element($scope.appointList);
+	// 	    	// queryDiv.append(data[]);
+	// 	    	queryDiv.append("<h2> Today is"+$scope.today+"</h2>")
+	// 	    	queryDiv.append(response["data"]);
+	// 	    	// console.log(data)
+	// 	    	// console.log(response["data"])
+	// 	    	// $scope.firstQuery.(response);
+	// 	    }, function errorCallback(response) {
+	// 	    // called asynchronously if an error occurs
+	// 	    // or server returns response with an error status.
+	// 	});
+	// }
 }])
+
+// .controller('secondCtrl', ['$scope', '$http','$state', function($scope, $http, $state) { 
+  	
+//     $scope.appointIt = function() {	
+//     	var date = new Date();
+//     	$scope.today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+//     	console.log(today)
+		
+// 		$http({
+// 			 method: 'POST',
+// 	 		 data: {'firstname': $scope.firstName, 
+// 	 		 		'lastname': $scope.lastName,
+// 	 		 		'email': $scope.email,
+// 	 		 		'today':$scope.today}, 
+// 	 		 url: '/appointQuery'
+// 			}).then(function successCallback(response) {
+// 		    	var queryDiv = angular.element($scope.appointList);
+// 		    	// queryDiv.append(data[]);
+// 		    	queryDiv.append("<h2> Today is"+$scope.today+"</h2>")
+// 		    	queryDiv.append(response["data"]);
+// 		    	// console.log(data)
+// 		    	// console.log(response["data"])
+// 		    	// $scope.firstQuery.(response);
+// 		    }, function errorCallback(response) {
+// 		    // called asynchronously if an error occurs
+// 		    // or server returns response with an error status.
+// 		});
+// 	}
+
+//     $scope.registerIt = function() {	
+//     	console.log("register")
+//     	console.log($scope.firstname)
+//     	console.log($scope.lastName)
+//     	    	console.log($scope.email)
+//     	    	    	console.log($scope.dob)
+    	    	    	
+//     	var date = $scope.birth
+//     	$scope.dob = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+
+// 		$http({
+// 			 method: 'POST',
+// 	 		 data: {'firstname': $scope.firstName, 
+// 	 		 		'lastname': $scope.lastName,
+// 	 		 		'email': $scope.email,
+// 	 		 		'date': $scope.dob}, 
+// 	 		 url: '/registerQuery'
+// 			}).then(function successCallback(response) {
+// 		    	var queryDiv = angular.element($scope.registerList);
+// 		    	// queryDiv.append(data[]);
+// 		    	queryDiv.append(response["data"]);
+// 		    	// console.log(data)
+// 		    	// console.log(response["data"])
+// 		    	// $scope.firstQuery.(response);
+// 		    }, function errorCallback(response) {
+// 		    // called asynchronously if an error occurs
+// 		    // or server returns response with an error status.
+// 		});
+// 	}
+// }])
 
 
 
