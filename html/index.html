@@ -32,7 +32,7 @@
                         <input id="search" class="searchBar" ng-model="name" placeholder="Search by name"></input>
                         <button id="submit" ng-click="searchIt()"><img src="../static/img/search.svg"/></button>
                         <div id=radio>
-                            <input type="radio" ng-model="type" name="type" value="patient" checked=""> Patient
+                            <input type="radio" ng-model="type" name="type" value="patient" checked> Patient
                             <input type="radio" ng-model="type" name="type" value="dentist"> Dentist
                         </div>
                     </form> 
@@ -47,11 +47,6 @@
 
         <div id="homeBackground" ng-hide="hideImg">
         </div>
-        
-        <!-- Display partials -->
-        <main>
-            <div ui-view></div>
-        </main>
 
         <div class="content" id="results" ng-show="hideImg">
             <div class="row">

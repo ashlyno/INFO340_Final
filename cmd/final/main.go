@@ -210,7 +210,11 @@ func main() {
 		// log.Println(info.Date)
 		_=rows2
 		// _=result
-		// _=err
+		_=err
+
+	})
+
+	router.POST("/registerShow", func(c *gin.Context) {
 
 		table := "<table class='table'><thead><tr>"
 		// put your query here
@@ -244,45 +248,59 @@ func main() {
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-	// router.POST("/appointQuery", func(c *gin.Context) {
-	// 	var info InfoCommand
+	router.POST("/appointQuery", func(c *gin.Context) {
+		var info InfoCommand
 
-	// 	c.BindJSON(&info)
-	// 	log.Println(info.Date)
-	// 	// db.Query("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ('',$1,$2,$3,CAST($4 AS date));",info.FirstName,info.LastName,info.Email,info.Date);
-	// 	db.Query("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ('',$1,$2,$3,CAST($4 AS date));",info.FirstName,info.LastName,info.Email,info.Date);
+		c.BindJSON(&info)
+		
+		// result, err := db.Exec("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ($1,$2,$3,$4,$5);",nil,info.FirstName,info.LastName,info.Email,info.Date);
+		rows2, err := db.Query("INSERT INTO Visit (patient_ID, dentist_ID, VisitDate, IsAppointed) VALUES ((SELECT patient_ID FROM Patient WHERE firstname = $1 AND lastname =$2),'',$3,true);",info.FirstName,info.LastName,info.Date);
+		// log.Println(info.FirstName)
+		// log.Println(info.LastName)
+		// log.Println(info.Email)
+		// log.Println(info.Date)
+		_=rows2
+		// _=result
+		_=err
+	})
 
-	// 	table := "<table class='table'><thead><tr>"
-	// 	// put your query here
-	// 	rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.firstName AS firstname, Patient.lastName AS lastname FROM Visit JOIN Patient ON Patient.patient_ID = Visit.patient_ID WHERE Visit.VisitDate >= date($1) ;",info.Today) // <--- EDIT THIS LINE
-	// 	if err != nil {
-	// 		// careful about returning errors to the user!
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 	}
-	// 	// foreach loop over rows.Columns, using value
-	// 	cols, _ := rows.Columns()
-	// 	if len(cols) == 0 {
-	// 		c.AbortWithStatus(http.StatusNoContent)
-	// 	}
-	// 	for _, value := range cols {
-	// 		table += "<th class='text-center'>" + value + "</th>"
-	// 	}
-	// 	// once you've added all the columns in, close the header
-	// 	table += "</thead><tbody>"
-	// 	// columns
-	// 	var date string
-	// 	var firstname string
-	// 	var lastname string
+	router.POST("/appointShow", func(c *gin.Context) {
 
-	// 	for rows.Next() {
-	// 		rows.Scan(&date,&firstname,&lastname) // put columns here prefaced with &
-	// 		table += "<tr><td>"+date+"</td><td>"+firstname+"</td><td>"+lastname+"</td></tr>" // <--- EDIT THIS LINE
-	// 	}
-	// 	// finally, close out the body and table
-	// 	table += "</tbody></table>"
-	// 	c.Data(http.StatusOK, "text/html", []byte(table))
-	// })
+		var today TodayCommand
+		c.BindJSON(&today)
 
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.patient_ID AS id, Patient.firstName AS firstname, Patient.lastName AS lastname FROM Visit JOIN Patient ON Patient.patient_ID = Visit.patient_ID WHERE Visit.VisitDate >= date($1) ;",today.Today) // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		var id int
+		var date string
+		var firstname string
+		var lastname string
+
+		for rows.Next() {
+			rows.Scan(&date,&id,&firstname,&lastname) // put columns here prefaced with &
+			table += "<tr><td>"+date+"</td><td>"+strconv.Itoa(id)+"</td><td>"+firstname+"</td><td>"+lastname+"</td></tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
 	// NO code should go after this line. it won't ever reach that point
 	router.Run(":" + port)
 }
@@ -297,5 +315,8 @@ type InfoCommand struct {
 	LastName string `json:"lastname"`
 	Email string `json:"email"`
 	Date string `json:"date"`
-	Today string `json:"today"`
+}
+
+type TodayCommand struct {
+    Today string `json:"today"`
 }

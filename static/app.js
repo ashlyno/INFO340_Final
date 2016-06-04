@@ -38,17 +38,23 @@ angular.module('myApp', ['ngSanitize','ui.router'])
     	$scope.hideIt();
 		$scope.firstQuery = firstQuery;
 		$scope.printName();
+		if($scope.type == undefined) {
+			$scope.type = "patient"
+		}
 		// console.log($scope.firstName);
 		// console.log($scope.lastName);
+
+    	var queryDiv = angular.element($scope.firstQuery);
+
+    	queryDiv.append("<h2 class='tableTop' style='margin-top: 60px'>"+$scope.firstName+" "+$scope.lastName+"</h2>")
+    	console.log($scope.type)
 		if($scope.type == "patient"){
 			$http({
 				 method: 'POST',
 		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
 		 		 url: '/patientQuery'
 				}).then(function successCallback(response) {
-			    	var queryDiv = angular.element($scope.firstQuery);
 			    	// queryDiv.append(data[]);
-			    	queryDiv.append("<h2>"+$scope.firstName+" "+$scope.lastName+"</h2>")
 			    	queryDiv.append(response["data"]);
 			    	// console.log(data)
 			    	// console.log(response["data"])
@@ -64,7 +70,6 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
 		 		 url: '/addressQuery'
 				}).then(function successCallback(response) {
-			    	var queryDiv = angular.element($scope.firstQuery);
 			    	// queryDiv.append(data[]);
 			    	queryDiv.append(response["data"]);
 			    	// 		    console.log(data)
@@ -80,9 +85,6 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		 		 data: {'firstname': $scope.firstName, 'lastname': $scope.lastName}, 
 		 		 url: '/dentistQuery'
 				}).then(function successCallback(response) {
-			    	var queryDiv = angular.element($scope.firstQuery);
-			    	// queryDiv.append(data[]);
-			    	queryDiv.append("<h2>"+$scope.firstName+" "+$scope.lastName+"</h2>")
 			    	queryDiv.append(response["data"]);
 			    	// console.log(data)
 			    	// console.log(response["data"])
@@ -98,8 +100,6 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 
     $scope.registerIt = function() {	
 
-    	$scope.registerList = registerList;
-
     	var date = $scope.birth
     	$scope.dob = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
 
@@ -111,9 +111,28 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 	 		 		'date': $scope.dob}, 
 	 		 url: '/registerQuery'
 			}).then(function successCallback(response) {
-		    	var regiDiv = angular.element($scope.registerList);
+
+		    }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+		$scope.registerShow();
+		document.forms["regiForm"].reset();		
+		// $scope.regiForm = regiForm;
+		// $scope.regiForm.$setPristine();
+	}
+
+	$scope.registerShow = function() {
+    	$scope.registerList = registerList;
+    	var queryDiv = angular.element($scope.registerList).empty();
+
+		$http({
+			 method: 'POST', 
+	 		 url: '/registerShow'
+			}).then(function successCallback(response) {
 		    	// queryDiv.append(data[]);
-		    	regiDiv.append(response["data"]);
+		    	queryDiv.append("<h2>All registered patients</h2>");
+		    	queryDiv.append(response["data"]);
 		    	// console.log(response["data"]);
 		    }, function errorCallback(response) {
 		    // called asynchronously if an error occurs
@@ -121,92 +140,56 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		});
 	}
 
+    $scope.appointIt = function() {	
+		$http({
+			 method: 'POST',
+	 		 data: {'firstname': $scope.firstName, 
+	 		 		'lastname': $scope.lastName,
+	 		 		'email': "",
+	 		 		'date': $scope.visitDate}, 
+	 		 url: '/appointQuery'
+			}).then(function successCallback(response) {
 
- //    $scope.appointIt = function() {	
- //    	var date = new Date();
- //    	$scope.today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
- //    	console.log(today)
-		
-	// 	$http({
-	// 		 method: 'POST',
-	//  		 data: {'firstname': $scope.firstName, 
-	//  		 		'lastname': $scope.lastName,
-	//  		 		'email': $scope.email,
-	//  		 		'today':$scope.today}, 
-	//  		 url: '/appointQuery'
-	// 		}).then(function successCallback(response) {
-	// 	    	var queryDiv = angular.element($scope.appointList);
-	// 	    	// queryDiv.append(data[]);
-	// 	    	queryDiv.append("<h2> Today is"+$scope.today+"</h2>")
-	// 	    	queryDiv.append(response["data"]);
-	// 	    	// console.log(data)
-	// 	    	// console.log(response["data"])
-	// 	    	// $scope.firstQuery.(response);
-	// 	    }, function errorCallback(response) {
-	// 	    // called asynchronously if an error occurs
-	// 	    // or server returns response with an error status.
-	// 	});
-	// }
+		    }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+	 	$scope.appointShow();
+	 	document.forms["appointForm"].rerset();
+	}
+
+	$scope.appointShow = function() {
+    	var date = new Date();
+    	$scope.today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+    	console.log($scope.today)
+
+    	$scope.appointList = appointList;
+    	var queryDiv = angular.element($scope.appointList).empty();
+
+		$http({
+			 method: 'POST', 
+			 data: {'today':$scope.today},
+	 		 url: '/appointShow'
+			}).then(function successCallback(response) {
+		    	// queryDiv.append(data[]);
+		    	queryDiv.append("<h2> Today is "+('0' + (date.getMonth() + 1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2)+'/'+date.getFullYear()+"</h2>")
+		    	queryDiv.append(response["data"]);
+		    	// console.log(response["data"]);
+		    }, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+	}
+
+	if(document.querySelector('#registerList')){
+		$scope.registerShow();
+	}
+	if(document.querySelector('#appointList')){
+		$scope.appointShow();
+	}
+
 }])
 
-// .controller('secondCtrl', ['$scope', '$http','$state', function($scope, $http, $state) { 
-  	
-//     $scope.appointIt = function() {	
-//     	var date = new Date();
-//     	$scope.today = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-//     	console.log(today)
-		
-// 		$http({
-// 			 method: 'POST',
-// 	 		 data: {'firstname': $scope.firstName, 
-// 	 		 		'lastname': $scope.lastName,
-// 	 		 		'email': $scope.email,
-// 	 		 		'today':$scope.today}, 
-// 	 		 url: '/appointQuery'
-// 			}).then(function successCallback(response) {
-// 		    	var queryDiv = angular.element($scope.appointList);
-// 		    	// queryDiv.append(data[]);
-// 		    	queryDiv.append("<h2> Today is"+$scope.today+"</h2>")
-// 		    	queryDiv.append(response["data"]);
-// 		    	// console.log(data)
-// 		    	// console.log(response["data"])
-// 		    	// $scope.firstQuery.(response);
-// 		    }, function errorCallback(response) {
-// 		    // called asynchronously if an error occurs
-// 		    // or server returns response with an error status.
-// 		});
-// 	}
-
-//     $scope.registerIt = function() {	
-//     	console.log("register")
-//     	console.log($scope.firstname)
-//     	console.log($scope.lastName)
-//     	    	console.log($scope.email)
-//     	    	    	console.log($scope.dob)
-    	    	    	
-//     	var date = $scope.birth
-//     	$scope.dob = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-
-// 		$http({
-// 			 method: 'POST',
-// 	 		 data: {'firstname': $scope.firstName, 
-// 	 		 		'lastname': $scope.lastName,
-// 	 		 		'email': $scope.email,
-// 	 		 		'date': $scope.dob}, 
-// 	 		 url: '/registerQuery'
-// 			}).then(function successCallback(response) {
-// 		    	var queryDiv = angular.element($scope.registerList);
-// 		    	// queryDiv.append(data[]);
-// 		    	queryDiv.append(response["data"]);
-// 		    	// console.log(data)
-// 		    	// console.log(response["data"])
-// 		    	// $scope.firstQuery.(response);
-// 		    }, function errorCallback(response) {
-// 		    // called asynchronously if an error occurs
-// 		    // or server returns response with an error status.
-// 		});
-// 	}
-// }])
 
 
 

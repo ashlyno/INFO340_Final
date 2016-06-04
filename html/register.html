@@ -39,9 +39,9 @@
 
         <main>
             <div class="content">
-                <div id ="appoint" class ="col-md-6">
+                <div id ="regist" class ="col-md-4">
                     <p>Add New Patient</p>
-                    <form>
+                    <form name="regiForm" nonvalidate>
                       <label>First name:</label><br>
                       <input ng-model="firstName" type="text" name="firstName"><br>
                       <label>Last name:</label><br>
@@ -54,15 +54,13 @@
                       <button id="submit" ng-click="registerIt()"> Submit </button>
                     </form>
                 </div>
-                <div class="col-md-6" id="registerListBox">
-                    <p>All Patients Registered</p>   
+                <div class="col-md-8 listBox">
                     <div class="row">
               			  <div ng-model="registerList" id="registerList"></div>
             		</div>    
                 </div>
             </div>
         </main>
-        </div>
     </div> 
     <footer>
         <div class="col-md-9"><p>Created by: Kelsey, Ashlyn, Woosuk</p></div>

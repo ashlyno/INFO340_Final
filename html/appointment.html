@@ -37,26 +37,24 @@
         </header>
         <main>
             <div class = "content">
-            <div>
-                <div class="col-md-6" id ="appoint">
+                <div class="col-md-4" id ="appoint">
                     <p>Create New Appointment</p>
-                    <form>
-                      <label>Patient First Name:</label><br>
-                      <input type="text" name="pfirstName"><br>
-                      <label>Patient Last Name:</label><br>
-                      <input type="text" name="plastName"><br>
+                    <form name="appointForm" novalidate>
+                      <label>First name:</label><br>
+                      <input ng-model="firstName" type="text" name="firstName"><br>
+                      <label>Last name:</label><br>
+                      <input ng-model="lastName" type="text" name="lastName"><br>
                       <label>Visit Date:</label><br>
-                      <input type="date" name="visitdate"><br>
+                      <input ng-model="visitDate" type="date" name="visitDate"><br>
                       <br>
-                      <input id="submit" type="button" value="Submit" ng-click="appointIt">
+                      <input id="submit" type="button" value="Submit" ng-click="appointIt()">
                     </form>
                 </div>
-                <div class="col-md-6" id="appointList">
-                    <br>
-                    <br>
-                    <p>All Appointments Made</p>       
+                <div class="col-md-8 listBox">
+                    <div class="row">
+                          <div ng-model="appointList" id="appointList"></div>
+                    </div>    
                 </div>
-            </div>
             </div>
         </main>
     </div> 
