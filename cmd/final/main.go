@@ -254,7 +254,7 @@ func main() {
 		c.BindJSON(&info)
 		
 		// result, err := db.Exec("INSERT INTO Patient (Address_ID, FirstName, LastName, Email, DOB) VALUES ($1,$2,$3,$4,$5);",nil,info.FirstName,info.LastName,info.Email,info.Date);
-		rows2, err := db.Query("INSERT INTO Visit (patient_ID, dentist_ID, VisitDate, IsAppointed) VALUES ((SELECT patient_ID FROM Patient WHERE firstname = $1 AND lastname =$2),'',$3,true);",info.FirstName,info.LastName,info.Date);
+		rows2, err := db.Query("INSERT INTO Visit (Patient_ID, Dentist_ID, VisitDate, IsAppointed) VALUES ((SELECT patient_ID FROM Patient WHERE firstname = $1 AND lastname = $2),null,CAST($3 AS date),'TRUE');",info.FirstName,info.LastName,info.Date);
 		// log.Println(info.FirstName)
 		// log.Println(info.LastName)
 		// log.Println(info.Email)
@@ -271,7 +271,7 @@ func main() {
 
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.patient_ID AS id, Patient.firstName AS firstname, Patient.lastName AS lastname FROM Visit JOIN Patient ON Patient.patient_ID = Visit.patient_ID WHERE Visit.VisitDate >= date($1) ;",today.Today) // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT Visit.VisitDate AS date, Patient.patient_ID AS id, Patient.firstName AS firstname, Patient.lastName AS lastname FROM Visit JOIN Patient ON Patient.patient_ID = Visit.patient_ID WHERE Visit.VisitDate >= date($1) ORDER BY VisitDate ASC;",today.Today) // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)

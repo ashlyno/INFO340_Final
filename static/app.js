@@ -145,7 +145,6 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 			 method: 'POST',
 	 		 data: {'firstname': $scope.firstName, 
 	 		 		'lastname': $scope.lastName,
-	 		 		'email': "",
 	 		 		'date': $scope.visitDate}, 
 	 		 url: '/appointQuery'
 			}).then(function successCallback(response) {
@@ -155,7 +154,7 @@ angular.module('myApp', ['ngSanitize','ui.router'])
 		    // or server returns response with an error status.
 		});
 	 	$scope.appointShow();
-	 	document.forms["appointForm"].rerset();
+	 	document.forms["appointForm"].reset();
 	}
 
 	$scope.appointShow = function() {
